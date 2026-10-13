@@ -1,0 +1,198 @@
+/* Modern style for the Joystick Curves visualization
+	1. Uses a "dark" theme
+	2. Uses the specified fonts imported from Google Fonts in the HTML file: 
+		a. Poiret One
+		b. LINE Seed JP
+		c. Lato
+		d. Blinker
+		e. Anta
+		f. Sansation
+		g. Clarity City
+	3. Uses a color scheme consisting of shades of black, white, aqua blue (#00ceff), and yellow (#ffda00)
+		a. Black is used for the background, shades of gray are used for the graph background and differentiating boxes of content, and other elements
+		b. White is used for the text
+		c. Aqua blue is used as an accent color for buttons and other interactive elements
+		d. Yellow is used for the joystick curve on the graph and other visual elements
+	4. Uses a responsive design that adapts to different screen sizes and orientations
+	5. Modern layout with a clean and simple design, using whitespace effectively to create a sense of balance and clarity
+	6. General aesthetic is a simple layout with soft boxes and rounded edges, with a focus on smooth transitions and animations
+*/
+
+body {
+	background-color: black;
+	color: white;
+	margin: 0;
+	padding: 0;
+}
+
+/* TEXT ELEMENTS */
+
+h1 {
+	font-family: 'Poiret One', cursive;
+	font-size: 3em;
+	color: white;
+	text-align: center;
+	margin-top: 20px;
+}
+
+h2 { 
+	font-family: 'Clarity City', sans-serif;
+	font-size: 2em;
+	color: white;
+	text-align: center;
+	margin-top: 20px;
+}
+
+p {
+	font-family: 'Lato', sans-serif;
+	font-size: 1.2em;
+	color: white;
+	text-align: center;
+	margin-top: 10px;
+}
+
+/* CONTAINERS */
+
+.title-container {
+	text-align: center;
+	margin-bottom: 20px;
+}
+
+.column-container {
+	display: flex;
+	flex-direction: row;
+	align-items: top;
+	justify-content: center;
+	gap: 50px;
+	padding: 50px;
+	box-sizing: border-box;
+	margin-top: 20px;
+	background: linear-gradient(to bottom, #1a1a1a, #000000);
+	border-top: 2px solid #00ceff;
+}
+
+.left-block {
+	width: 30%;
+	/* make it its own column with a border, rounded corners, padding, a subtle gradient, and a shadow */
+	border: 2px solid #00ceff;
+	padding: 25px;
+	background: linear-gradient(to top, #1a1a1a, #000000);
+	border-radius: 10px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.right-block {
+	width: 70%;
+}
+
+/* FORM ELEMENTS */
+
+.left-block h2 {
+	margin-bottom: 20px;
+}
+
+.left-block p {
+	text-align: left;
+	margin-bottom: 25px;
+}
+
+#rates-form {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 10px;
+}
+
+.form-group {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	background-color: #1a1a1a;
+	padding: 15px;
+	border-radius: 5px;
+	border: 2px solid #00ceff;
+}
+
+.left-block label {
+	display: block;
+	margin-bottom: 5px;
+	font-family: 'Lato', sans-serif;
+	color: #00ceff;
+	font-size: 1.2em;
+	font-weight: bold;
+	width: 150px;
+}
+
+.left-block input[type="number"] {
+	background-color: #1a1a1a;
+	color: #ffffff;
+	border: 2px solid #00ceff;
+	border-radius: 5px;
+	padding: 5px;
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);	
+	text-align: center;
+	font-family: 'Lato', sans-serif;
+	font-size: 1.1em;
+	font-weight: bold;
+	width: 100px;
+	transition: all 0.3s ease;
+}
+
+.left-block input[type="number"]:hover {
+	outline: none;
+	border-color: #00ceff;
+	box-shadow: 0 0 10px #00ceff;
+}
+
+.left-block input[type="number"]:focus {
+	outline: none;
+	border-color: #ffda00;
+	box-shadow: 0 0 10px #ffda00;
+}
+
+.left-block input[type="submit"] {
+	align-self: center;
+	background-color: #00ceff;
+	color: #000000;
+	border: none;
+	border-radius: 5px;
+	padding: 10px 20px;
+	font-family: 'Lato', sans-serif;
+	font-size: 1.2em;
+	font-weight: bold;
+	cursor: pointer;
+	transition: all 0.3s ease;
+}
+
+.left-block input[type="submit"]:hover {
+	background-color: #ffda00;
+	color: #000000;
+	box-shadow: 0 0 10px #ffda00;
+}
+
+/* GRAPH ELEMENTS */
+
+#graphCanvas {
+	/* make the graph canvas fill up the right block with a border, rounded corners, padding, a subtle gradient, and a shadow */
+	width: 100%;
+	height: 100%;
+	background-color: #1a1a1a;
+	border: 2px solid #00ceff;
+	border-radius: 10px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* WEBKIT QUIRKS */
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}

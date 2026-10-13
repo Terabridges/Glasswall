@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>GLASSWALL - Joystick Curves</title>
+	<!-- Connect to stylesheet -->
+	<link rel="stylesheet" href="style.css">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Anta&family=Arvo:ital,wght@0,400;0,700;1,400;1,700&family=Blinker:wght@100;200;300;400;600;700;800;900&family=Clarity+City:ital,wght@0,100..900;1,100..900&family=LINE+Seed+JP&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Poiret+One&family=Sankofa+Display&family=Sansation:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+	<script src="https://cjrtnc.leaningtech.com/4.3/loader.js"></script>
+</head>
+<body>
+	<div class="title-container">
+		<h1>GLASSWALL - Joystick Curves</h1>
+		<p>These are the formulas used to calculate the joystick curves for the robot.</p>
+		<p>Link for desmos visualization of formulas: <a href="https://www.desmos.com/calculator/ig1zzfog0r">https://www.desmos.com/calculator/ig1zzfog0r</a></p>
+	</div>
+
+	<!-- Two block structure for displaying the graph on the right and the Rates parameters on the left -->
+	<div class="column-container">
+		<div class="left-block">
+			<h2>Parameters</h2>
+			<p>These are the parameters used to calculate the joystick curves for the robot. Adjust the parameters below and see how it affects the graph on the right.</p>
+			<form id="rates-form">
+				<div class="form-group">
+					<label for="centerRate">Center Rate:</label>
+					<input type="number" id="centerRate" name="centerRate" value="0.25" step="0.01" min="0"><br><br>
+				</div>
+				<div class="form-group">
+					<label for="maxRate">Max Value:</label>
+					<input type="number" id="maxRate" name="maxRate" value="1" step="0.01" min="0" max="1"><br><br>
+				</div>
+				<div class="form-group">
+					<label for="deadzone">Deadzone:</label>
+					<input type="number" id="deadzone" name="deadzone" value="0.15" step="0.01" min="0" max="1"><br><br>
+				</div>
+				<div class="form-group">
+					<label for="exponent">Blend:</label>
+					<input type="number" id="exponent" name="exponent" value="0" step="0.1" min="0.0" max="1.0"><br><br>
+				</div>
+				<input type="submit" value="Update Graph" id="submitButton">
+			</form>
+		</div>
+		<div class="right-block">
+			<canvas id="graphCanvas"></canvas>
+		</div>
+	</div>
+
+	<script src="script.js"></script>
+</body>
+</html>
