@@ -7,19 +7,36 @@ const cj = await cheerpjRunLibrary("/app/Joystick Curves/RatesLibrary/RatesLibra
 const Rates = await cj.Rates;
 let ratesInstance = null; // Initialize the ratesInstance variable
 
-// Create an instance of the Rates class whenever the form is submitted
-document.getElementById("rates-form").addEventListener("submit", async (event) => {
-	event.preventDefault();
-	ratesInstance = await new Rates(
-		Number(document.getElementById("centerRate").value),
-		Number(document.getElementById("maxRate").value),
-		Number(document.getElementById("exponent").value),
-		Number(document.getElementById("deadzone").value),
-	); // Use the parameters from the form inputs to create the Rates instance
-	console.log("Rates instance created:", ratesInstance);
-	// You can now use the ratesInstance to call methods from the Rates class
-	renderGraph(); // Call renderGraph to update the graph with the new ratesInstance
-});
+// GLOBAL VARIABLES
+let yOutput = 0, xOutput = 0;
+
+// Create a default Rates instance with default parameters
+ratesInstance = await new Rates(
+	Number(document.getElementById("centerRate").value),
+	Number(document.getElementById("maxRate").value),
+	Number(document.getElementById("exponent").value),
+	Number(document.getElementById("deadzone").value),
+);
+
+const inputElements = [
+	document.getElementById("centerRate"),
+	document.getElementById("maxRate"),
+	document.getElementById("exponent"),
+	document.getElementById("deadzone")
+]
+
+for (const inputElement of inputElements) {
+	inputElement.addEventListener("input", async () => {
+		ratesInstance = await new Rates(
+			Number(document.getElementById("centerRate").value),
+			Number(document.getElementById("maxRate").value),
+			Number(document.getElementById("exponent").value),
+			Number(document.getElementById("deadzone").value),
+		);
+		console.log("Rates instance created:", ratesInstance);
+		renderGraph();
+	});
+}
 
 // Populate the graph with a grid and axes
 const canvas = document.getElementById("graphCanvas");
@@ -182,6 +199,90 @@ async function renderGraph() {
 	}
 }
 
+// JOYSTICK INPUT
+const joystick = document.getElementById("joystick");
+const joystickKnob = document.getElementById("stick");
+let isDragging = false;
+let initalKnobPos = { 
+	left: "50%",
+	top: "50%",
+};
+let centerX, centerY;
+
+joystickKnob.addEventListener("mousedown", (e) => {
+	isDragging = true;
+	centerX = joystickKnob.getBoundingClientRect().left + joystickKnob.offsetWidth / 2;
+	centerY = joystickKnob.getBoundingClientRect().top + joystickKnob.offsetHeight / 2;
+});
+
+joystickKnob.addEventListener("mousemove", (e) => {
+	if (!isDragging) return;
+	const x = e.clientX - centerX;
+	const y = e.clientY - centerY;
+	const distance = Math.sqrt(x * x + y * y);
+	const maxDistance = (joystick.offsetWidth / 2);
+	if (distance > maxDistance) {
+		const angle = Math.atan2(y, x);
+		const newX = Math.cos(angle) * maxDistance;
+		const newY = Math.sin(angle) * maxDistance;
+		joystickKnob.style.left = `calc(${initalKnobPos.left} + ${newX}px)`;
+		joystickKnob.style.top = `calc(${initalKnobPos.top} + ${newY}px)`;
+	} else {
+		joystickKnob.style.left = `calc(${initalKnobPos.left} + ${x}px)`;
+		joystickKnob.style.top = `calc(${initalKnobPos.top} + ${y}px)`;
+	}
+	updateOutputValues();
+});
+
+joystickKnob.addEventListener("mouseup", () => {
+	isDragging = false;
+	if (joystickKnob.style.left !== initalKnobPos.left) {
+		joystickKnob.style.left = initalKnobPos.left;
+	}
+	if (joystickKnob.style.top !== initalKnobPos.top) {
+		joystickKnob.style.top = initalKnobPos.top;
+	}
+	updateOutputValues();
+	centerX = joystickKnob.getBoundingClientRect().left + joystickKnob.offsetWidth / 2;
+	centerY = joystickKnob.getBoundingClientRect().top + joystickKnob.offsetHeight / 2;
+});
+
+joystickKnob.addEventListener("mouseleave", () => {
+	isDragging = false;
+	if (joystickKnob.style.left !== initalKnobPos.left) {
+		joystickKnob.style.left = initalKnobPos.left;
+	}
+	if (joystickKnob.style.top !== initalKnobPos.top) {
+		joystickKnob.style.top = initalKnobPos.top;
+	}
+	updateOutputValues();
+	centerX = joystickKnob.getBoundingClientRect().left + joystickKnob.offsetWidth / 2;
+	centerY = joystickKnob.getBoundingClientRect().top + joystickKnob.offsetHeight / 2;
+});
+
+// Use joystick knob position (left and top percentage value) and the Rates instance to calculate the output values and update the meter fills
+async function updateOutputValues() {
+	if (!ratesInstance) return; // If ratesInstance is not defined, exit the function
+	let centerX = joystickKnob.getBoundingClientRect().left + joystickKnob.offsetWidth / 2;
+	let centerY = joystickKnob.getBoundingClientRect().top + joystickKnob.offsetHeight / 2;
+	const leftPercent = (centerX - joystick.getBoundingClientRect().left) / joystick.offsetWidth;
+	const topPercent = (centerY - joystick.getBoundingClientRect().top) / joystick.offsetHeight;
+	console.log(`Joystick Position: (${leftPercent.toFixed(2)}, ${(topPercent).toFixed(2)})`);
+	const xInput = (leftPercent - 0.5) * 2;
+	const yInput = (topPercent - 0.5) * 2;
+	console.log(`Joystick Input: (${xInput.toFixed(2)}, ${yInput.toFixed(2)})`);
+
+	xOutput = await ratesInstance.apply(xInput);
+	yOutput = await ratesInstance.apply(yInput);
+	yOutput = -yOutput; // Invert the Y output to match the joystick's coordinate system
+
+	document.documentElement.style.setProperty('--joystick-x-value', xOutput);
+	document.documentElement.style.setProperty('--joystick-y-value', yOutput);
+
+	// Update the output values display
+	document.getElementById("outputX").textContent = xOutput.toFixed(2);
+	document.getElementById("outputY").textContent = yOutput.toFixed(2);
+}
 
 renderGraph();
 

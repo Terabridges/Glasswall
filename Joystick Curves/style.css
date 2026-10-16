@@ -18,6 +18,11 @@
 	6. General aesthetic is a simple layout with soft boxes and rounded edges, with a focus on smooth transitions and animations
 */
 
+:root {
+	--joystick-x-value: 0.0;
+	--joystick-y-value: 0.0;
+}
+
 body {
 	background-color: black;
 	color: white;
@@ -72,7 +77,11 @@ p {
 }
 
 .left-block {
-	width: 30%;
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	align-items: center;
+	width: 20%;
 	/* make it its own column with a border, rounded corners, padding, a subtle gradient, and a shadow */
 	border: 2px solid #00ceff;
 	padding: 25px;
@@ -81,8 +90,12 @@ p {
 	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
+.middle-block {
+	width: 60%;
+}
+
 .right-block {
-	width: 70%;
+	width: 20%;
 }
 
 /* FORM ELEMENTS */
@@ -99,8 +112,11 @@ p {
 #rates-form {
 	display: flex;
 	flex-direction: column;
+	justify-content: center;
 	align-items: center;
-	gap: 10px;
+	gap: 20px;
+	margin-top: auto;
+	margin-bottom: auto;
 }
 
 .form-group {
@@ -150,26 +166,6 @@ p {
 	box-shadow: 0 0 10px #ffda00;
 }
 
-.left-block input[type="submit"] {
-	align-self: center;
-	background-color: #00ceff;
-	color: #000000;
-	border: none;
-	border-radius: 5px;
-	padding: 10px 20px;
-	font-family: 'Lato', sans-serif;
-	font-size: 1.2em;
-	font-weight: bold;
-	cursor: pointer;
-	transition: all 0.3s ease;
-}
-
-.left-block input[type="submit"]:hover {
-	background-color: #ffda00;
-	color: #000000;
-	box-shadow: 0 0 10px #ffda00;
-}
-
 /* GRAPH ELEMENTS */
 
 #graphCanvas {
@@ -180,6 +176,175 @@ p {
 	border: 2px solid #00ceff;
 	border-radius: 10px;
 	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* JOYSTICK ELEMENTS */
+
+.joystick-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 10px;
+	padding: 20px;
+	background-color: #1a1a1a;
+	border: 2px solid #00ceff;
+	border-radius: 10px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.joystick {
+	width: 200px;
+	height: 200px;
+	background: radial-gradient(#333 0%, #222 60%, #111 100%);
+	border: 2px solid #00ceff;
+	border-radius: 50%;
+	position: relative;
+	box-shadow: inset 0 5px 10px rgba(0,0,0,0.7), 0 8px 25px 5px rgba(0,0,0,0.5);
+}
+
+.stick {
+	/* make the stick a small dark grey circle (radial gradient from grey to dark grey) with a black border in the center of the joystick */
+	/* this mimics the style of a real joystick stick */
+	background: radial-gradient(circle, #555 0%, #333 100%);
+	width: 80px;
+	height: 80px;
+	border-radius: 50%;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	box-shadow: inset 0 5px 10px rgba(0,0,0,0.7), 0 8px 25px 5px rgba(0,0,0,0.5);
+}
+
+.stick::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  border-radius: 50%;
+  background: #333;
+  /* Links to the SVG filter */
+  filter: url(#fuzzy-groove); 
+  /* Gives it that indented thumbstick ridge */
+  box-shadow: inset 0 5px 10px rgba(0,0,0,0.8); 
+}
+
+.output-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 10px;
+	padding: 20px;
+}
+
+.meter-container {
+	display: flex;
+	flex-direction: row;
+	align-items: stretch;
+	justify-content: center;
+	gap: 20px;
+	padding: 20px;
+}
+
+.x-axis-meter-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: flex-start;
+	gap: 10px;
+}
+
+.y-axis-meter {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	overflow: hidden;
+	width: 30px;
+	height: 200px;
+	background: linear-gradient(to bottom, #1a1a1a, #000000, #1a1a1a);
+	border: 2px solid #00ceff;
+	border-radius: 10px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.y-axis-meter::before {
+	content: "";
+	position: absolute;
+	top: 50%;
+	left: 0;
+	transform: translateY(-50%);
+	width: 100%;
+	height: 2px;
+	background-color: #00ceff;
+}
+
+.x-axis-meter {
+	position: relative;
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	overflow: hidden;
+	width: 200px;
+	height: 30px;
+	background: linear-gradient(to left, #1a1a1a, #000000, #1a1a1a);
+	border: 2px solid #00ceff;
+	border-radius: 10px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+	/* add an aqua blue vertical line in the middle to seprate the left half and right half because x-meter-fill can be negative or positive */
+	
+}
+
+.x-axis-meter::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 50%;
+	transform: translateX(-50%);
+	width: 2px;
+	height: 100%;
+	background-color: #00ceff;
+}
+
+.y-meter-fill {
+	position: relative;
+	--angle: calc(0.25turn + (sign(var(--joystick-y-value)) * 0.25turn));
+	background: linear-gradient(var(--angle), #ffda00, #cc9900);
+	width: 100%;
+	height: calc(abs(var(--joystick-y-value)) * 50%);
+	top: calc((-1 * (var(--joystick-y-value) / 2)) * 50%);
+	background-color: #ffda00;
+}
+
+.x-meter-fill {
+	position: relative;
+	--angle: calc((0.25turn + (sign(var(--joystick-x-value)) * 0.25turn)) + 0.25turn);
+	background: linear-gradient(var(--angle), #ffda00, #cc9900);
+	width: calc(abs(var(--joystick-x-value) * 50%));
+	height: 100%;
+	left: calc(((var(--joystick-x-value) / 2)) * 50%);
+	background-color: #ffda00;
+}
+
+.output-values {
+	margin-top: auto;
+  	margin-bottom: auto;
+}
+
+.output-values p {
+	font-family: 'Clarity City', sans-serif;
+	font-size: 1.5em;
+	font-weight: bold;
+	color: #00ceff;
+	text-align: center;
+	margin: 20px 0px;
+	text-shadow: 0 0 10px #00ceff;
+}
+
+.output-values span {
+	color: #ffda00;
+	text-shadow: 0 0 10px #ffda00;
 }
 
 /* WEBKIT QUIRKS */
