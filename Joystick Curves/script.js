@@ -8,6 +8,7 @@ const Rates = await cj.Rates;
 let ratesInstance = null; // Initialize the ratesInstance variable
 
 // GLOBAL VARIABLES
+let yInput = 0, xInput = 0;
 let yOutput = 0, xOutput = 0;
 
 // Create a default Rates instance with default parameters
@@ -183,19 +184,35 @@ async function renderGraph() {
 		}
 		ctx.stroke();
 
-		/*
-		// Draw dashed vertical lines to at x=-1 and x=1 to represent the min and max value of a joystick input
-		ctx.strokeStyle = "#ffda00";
-		ctx.lineWidth = 1;
-		ctx.setLineDash([5, 5]);
-		const minX = originX + (-1 * scaleX);
-		const maxX = originX + (1 * scaleX);
+		// Draw the output circles
+		ctx.fillStyle = "#3b82f6"; // Blue
 		ctx.beginPath();
-		ctx.moveTo(minX, 0); ctx.lineTo(minX, h);
-		ctx.moveTo(maxX, 0); ctx.lineTo(maxX, h);
-		ctx.stroke();
-		ctx.setLineDash([]); // Reset line dash
-		*/
+		ctx.arc(originX + (xInput * scaleX), originY - (xOutput * scaleY), 10, 0, 2 * Math.PI);
+		ctx.fill();
+		ctx.fillStyle = "#ef4444"; // Red
+		ctx.beginPath();
+		ctx.arc(originX + (yInput * scaleX), originY - (yOutput * scaleY), 10, 0, 2 * Math.PI);
+		ctx.fill();
+
+		// When xOutput/yOutput is not 0, draw a dashed blue horizontal line intersecting the blue circle and parallel to the x-axis, and a dashed red vertical line intersecting the red circle and parallel to the x-axis
+		if (xOutput !== 0) {
+			ctx.strokeStyle = "#3b82f6";
+			ctx.setLineDash([5, 5]);
+			ctx.beginPath();
+			ctx.moveTo(0, originY - (xOutput * scaleY));
+			ctx.lineTo(w, originY - (xOutput * scaleY));
+			ctx.stroke();
+			ctx.setLineDash([]);
+		}
+		if (yOutput !== 0) {
+			ctx.strokeStyle = "#ef4444";
+			ctx.setLineDash([5, 5]);
+			ctx.beginPath();
+			ctx.moveTo(0, originY - (yOutput * scaleY));
+			ctx.lineTo(w, originY - (yOutput * scaleY));
+			ctx.stroke();
+			ctx.setLineDash([]);
+		}
 	}
 }
 
@@ -268,13 +285,13 @@ async function updateOutputValues() {
 	const leftPercent = (centerX - joystick.getBoundingClientRect().left) / joystick.offsetWidth;
 	const topPercent = (centerY - joystick.getBoundingClientRect().top) / joystick.offsetHeight;
 	console.log(`Joystick Position: (${leftPercent.toFixed(2)}, ${(topPercent).toFixed(2)})`);
-	const xInput = (leftPercent - 0.5) * 2;
-	const yInput = (topPercent - 0.5) * 2;
+	xInput = (leftPercent - 0.5) * 2;
+	yInput = (topPercent - 0.5) * 2;
+	yInput = -yInput; // Invert the Y input to match the joystick's coordinate system
 	console.log(`Joystick Input: (${xInput.toFixed(2)}, ${yInput.toFixed(2)})`);
 
 	xOutput = await ratesInstance.apply(xInput);
 	yOutput = await ratesInstance.apply(yInput);
-	yOutput = -yOutput; // Invert the Y output to match the joystick's coordinate system
 
 	document.documentElement.style.setProperty('--joystick-x-value', xOutput);
 	document.documentElement.style.setProperty('--joystick-y-value', yOutput);
@@ -282,6 +299,9 @@ async function updateOutputValues() {
 	// Update the output values display
 	document.getElementById("outputX").textContent = xOutput.toFixed(2);
 	document.getElementById("outputY").textContent = yOutput.toFixed(2);
+
+	// Update the graph with the new output values
+	renderGraph();
 }
 
 renderGraph();
