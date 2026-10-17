@@ -3,7 +3,7 @@
 	await cheerpjInit();
 
 // Load the RatesLibrary.jar file and get the Rates class
-const cj = await cheerpjRunLibrary("/app/Joystick%20Curves/RatesLibrary/RatesLibrary.jar");
+const cj = await cheerpjRunLibrary("/app/JoystickCurves/RatesLibrary/RatesLibrary.jar");
 const Rates = await cj.Rates;
 let ratesInstance = null; // Initialize the ratesInstance variable
 
