@@ -92,6 +92,7 @@ p {
 
 .middle-block {
 	width: 60%;
+	position: relative;
 }
 
 .right-block {
@@ -176,6 +177,23 @@ p {
 	border: 2px solid #00ceff;
 	border-radius: 10px;
 	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+#graphDirections {
+	/* make the graph directions text stay in the bottom right corner, white color */
+	position: absolute;
+	bottom: 10px;
+	right: 20px;
+	color: #ffffff;
+	font-size: 0.8em;
+	font-family: 'LINE Seed JP', sans-serif;
+	opacity: 0.7;
+	transition: opacity 0.3s ease;
+}
+
+.middle-block:hover #graphDirections {
+	opacity: 1.0;
+	text-shadow: 0 0 10px #00ceff;
 }
 
 /* JOYSTICK ELEMENTS */
